@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 import weakref
-from supplies.annotate import Get, Set, Annotate, Descriptor
+from supplies.annotate import Get, Set, Annotate, Cache, Attr
 
 __author__ = 'dwae'
 __all__ = ['depend']
@@ -38,7 +38,8 @@ class Dependent:
         specifies that the value is accessed
         """
         for tr in self.__traces__:
-            self.influencing.add(tr)
+            if tr != self:
+                self.influencing.add(tr)
 
     def invalidates(self):
         """
@@ -67,7 +68,7 @@ def _insert_dep(f):
     return dependent
 
 
-class Depend(Get, Set):
+class Depend(Get, Set, Annotate):
     """
     Annotation to define dependency traced descriptors
     """
@@ -91,8 +92,9 @@ class Depend(Get, Set):
     @_insert_dep
     def __set__(self, dep, instance, value):
         dep.invalidates()
+        result = super().__set__(instance, value)
         dep.value = (value,)
-        return super().__set__(instance, value)
+        return result
 
     @_insert_dep
     def __delete__(self, dep, instance):
@@ -105,10 +107,13 @@ class Depend(Get, Set):
     def __default__(self, dep, instance):
         if dep.value:
             self.__set__(instance, dep.value[0])
-            return self.__get__(instance)
+            return super().__get__(instance)
         else:
             return super().__default__(instance)
 
 
-depend = Depend
+class _Depend(Depend, Cache, Attr):
+    pass
 
+
+depend = _Depend

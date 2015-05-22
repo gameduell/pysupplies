@@ -1,4 +1,5 @@
 import pytest
+from supplies.annotate import delay
 from supplies.params import param, Params
 
 __author__ = 'dwae'
@@ -8,6 +9,10 @@ class Foo(Params):
     @param
     def bar(self, val: (1, 42)=23):
         return val
+
+    @delay
+    def bla(self):
+        return ...
 
 
 class Bar(Foo, Params):
@@ -56,6 +61,32 @@ def test_basic():
 
     with pytest.raises(TypeError):
         Bar(bar=1, nil=None)
+
+
+def test_export():
+    bar = Bar(bar=42, baz='foo')
+
+    params = bar.params
+    assert {'bar', 'baz'} == params.names
+
+    assert params.bar.name == 'bar'
+    assert params['baz'].name == 'baz'
+
+    assert params['bar'].value == 42
+    assert params.baz.value == 'foo'
+
+    assert params.bar.default == 23
+    assert params.baz.default == 'f00'
+
+    assert 'bar=42' in str(params)
+    assert "baz='foo'" in repr(params)
+
+    assert bar.bla is ...
+    with pytest.raises(KeyError):
+        params['bla']
+
+    with pytest.raises(AttributeError):
+        params.bla
 
 
 class Convert(Params):

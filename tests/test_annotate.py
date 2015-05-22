@@ -1,6 +1,6 @@
 import asyncio
 import pytest
-from supplies.annotate import Annotate, Conotate, Get, ObjDescriptor, update
+from supplies.annotate import Annotate, Conotate, Get, update
 
 __author__ = 'dwae'
 

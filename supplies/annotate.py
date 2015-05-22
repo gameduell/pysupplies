@@ -1,13 +1,13 @@
 from functools import wraps
 import weakref
 
-from asyncio import coroutine, gather
+from asyncio import coroutine
 
 from supplies.coop import Named
 
 
 __author__ = 'dwae'
-__all__ = ['delay, refer, update, attr']
+__all__ = ['delay', 'refer', 'update', 'attr']
 
 
 class Annotate(Named):
@@ -40,9 +40,9 @@ class Annotate(Named):
     def iter(cls, instance, owner=None):
         typ = owner or type(instance)
         for name in dir(typ):
-            attr =  getattr(typ, name)
-            if isinstance(attr, cls):
-                yield attr
+            desc = getattr(typ, name)
+            if isinstance(desc, cls):
+                yield desc
 
 
 class Conotate(Annotate):
@@ -75,7 +75,6 @@ class Descriptor:
     def del_entry(self, instance):
         dct, key = self.lookup(instance)
         del dct[key]
-
 
 
 class ObjDescriptor(Descriptor, Named):
@@ -118,7 +117,6 @@ class Get(Descriptor):
     def __default__(self, instance):
         raise NameError("Descriptor {} of {} object has no associated value"
                         .format(self, type(instance).__name__))
-
 
 
 class Property(Get, Annotate):
