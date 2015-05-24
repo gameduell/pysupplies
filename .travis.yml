@@ -1,0 +1,9 @@
+language: python
+python:
+  - "3.4"
+
+install: 
+  - "python setup.py develop"
+  - "pip install pytest-cov"
+script: py.test --cov supplies
+
