@@ -78,8 +78,8 @@ def test_export():
     assert params.bar.default == 23
     assert params.baz.default == 'f00'
 
-    assert 'bar=42' in str(params)
-    assert "baz='foo'" in repr(params)
+    assert 'bar=42' in str(bar)
+    assert "baz='foo'" in repr(bar)
 
     assert bar.bla is ...
     with pytest.raises(KeyError):

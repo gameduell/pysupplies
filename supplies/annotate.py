@@ -12,7 +12,7 @@ __all__ = ['delay', 'refer', 'update', 'attr']
 
 class Annotate(Named):
     """
-    The Annotate class wraps an annotated class or function into an object
+    The Annotate class wraps an annotated definition into an object
     """
     def __new__(cls, *args, **kws):
 
